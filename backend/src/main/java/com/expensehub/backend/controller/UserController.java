@@ -5,6 +5,7 @@ import com.expensehub.backend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -28,8 +29,19 @@ public class UserController {
         );
     }
 
+    // Implementing the getProfile method to handle the HTTP GET request for retrieving the profile of the currently authenticated user.
+    @GetMapping("/profile")
+    public UserResponse getProfile(
+            Authentication authentication
+    ) {
+
+        return userService.getUserByEmail(
+                authentication.getName()
+        );
+    }
+
     // Implementing the getUser method to handle the HTTP GET request for retrieving a user by their ID.
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public UserResponse getUser(
             @PathVariable Long id
     ) {

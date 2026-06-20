@@ -23,4 +23,6 @@ public interface UserService {
     void deleteUser(Long id);
 
     String login(LoginRequest request);
+
+    UserResponse getUserByEmail(String email);
 }
