@@ -6,6 +6,8 @@ import com.expensehub.backend.repository.UserRepository;
 import com.expensehub.backend.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    // Implementing the createUser method to create a new user.
+    // It takes a RegisterUserRequest object as input, which contains the user's name, email, address, and password. 
+    // The password is encoded before saving the user to the database.
     @Override
     public UserResponse createUser(
             RegisterUserRequest request
@@ -25,7 +31,11 @@ public class UserServiceImpl implements UserService{
                         .name(request.getName())
                         .email(request.getEmail())
                         .address(request.getAddress())
-                        .password(request.getPassword())
+                        .password(
+                            passwordEncoder.encode(
+                                request.getPassword()
+                            )
+                        )
                         .build();
 
         User saved =
@@ -34,6 +44,8 @@ public class UserServiceImpl implements UserService{
         return map(saved);
     }
 
+    // Implementing the getUserById method to retrieve a user by their ID. 
+    // If the user is not found, a ResourceNotFoundException is thrown.
     @Override
     public UserResponse getUserById(
             Long id
@@ -49,6 +61,7 @@ public class UserServiceImpl implements UserService{
         return map(user);
     }
 
+    // Implementing the getAllUsers method to retrieve all users from the database.
     @Override
     public List<UserResponse>
     getAllUsers() {
@@ -59,6 +72,8 @@ public class UserServiceImpl implements UserService{
                 .toList();
     }
 
+    // Implementing the updateUser method to update an existing user's information.
+    // It takes the user's ID and an UpdateUserRequest object as input.
     @Override
     public UserResponse updateUser(
             Long id,
@@ -81,6 +96,8 @@ public class UserServiceImpl implements UserService{
         return map(updated);
     }
 
+    // Implementing the deleteUser method to delete a user by their ID.
+    // If the user is not found, a ResourceNotFoundException is thrown.
     @Override
     public void deleteUser(Long id) {
 
@@ -94,6 +111,7 @@ public class UserServiceImpl implements UserService{
         userRepository.delete(user);
     }
 
+    // Implementing a private map method to convert a User entity to a UserResponse DTO.
     private UserResponse map(
             User user
     ) {

@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class RegisterUserRequest {
+    // Implementing a RegisterUserRequest class to represent the request data for user registration.
     @NotBlank
     private String name;
 

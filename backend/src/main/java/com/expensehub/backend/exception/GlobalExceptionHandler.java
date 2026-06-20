@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    // Handling ResourceNotFoundException and returning a 404 Not Found response with the exception message.
     @ExceptionHandler(
             ResourceNotFoundException.class
     )
@@ -17,6 +18,7 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    // Handling generic exceptions and returning a 500 Internal Server Error response with the exception message.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String>
     handleException(Exception ex) {
