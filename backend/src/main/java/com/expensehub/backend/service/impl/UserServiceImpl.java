@@ -4,6 +4,7 @@ import com.expensehub.backend.entity.User;
 import com.expensehub.backend.exception.ResourceNotFoundException;
 import com.expensehub.backend.repository.UserRepository;
 import com.expensehub.backend.service.UserService;
+import com.expensehub.backend.security.JwtService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     // Implementing the createUser method to create a new user.
     // It takes a RegisterUserRequest object as input, which contains the user's name, email, address, and password. 
@@ -122,5 +124,28 @@ public class UserServiceImpl implements UserService{
                 .email(user.getEmail())
                 .address(user.getAddress())
                 .build();
+    }
+
+    // Implementing the login method to authenticate a user based on their email and password.
+    // It checks if the user exists and if the provided password matches the stored password.
+    @Override
+    public String login(LoginRequest request) {
+
+        User user = userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Invalid credentials"));
+
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
+            throw new RuntimeException(
+                    "Invalid credentials");
+        }
+
+        return jwtService.generateToken(
+                user.getEmail());
     }
 }
