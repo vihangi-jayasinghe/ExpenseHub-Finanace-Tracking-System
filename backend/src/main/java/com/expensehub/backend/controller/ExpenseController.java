@@ -2,12 +2,16 @@ package com.expensehub.backend.controller;
 
 import com.expensehub.backend.dto.*;
 import com.expensehub.backend.service.ExpenseService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/expenses")
 @RequiredArgsConstructor
@@ -18,7 +22,7 @@ public class ExpenseController {
 
     @PostMapping
     public ExpenseResponse createExpense(
-            @RequestBody CreateExpenseRequest request,
+            @Valid @RequestBody CreateExpenseRequest request,
             Authentication authentication
     ) {
 
