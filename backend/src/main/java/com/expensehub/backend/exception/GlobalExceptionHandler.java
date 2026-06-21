@@ -1,65 +1,43 @@
 package com.expensehub.backend.exception;
 
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
-public class GlobalExceptionHandler {
+@ControllerAdvice
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-        //Implementing a global exception handler to catch ResourceNotFoundException and return a standardized error response with a 404 Not Found status.
-        @ExceptionHandler(ResourceNotFoundException.class)
-        public ResponseEntity<ErrorResponse> handleNotFound(
-                ResourceNotFoundException ex) {
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<Object> handleUnauthorized(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
+    }
 
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(
-                                ErrorResponse.builder()
-                                        .timestamp(LocalDateTime.now())
-                                        .status(404)
-                                        .error("NOT_FOUND")
-                                        .message(ex.getMessage())
-                                        .build()
-                        );
-        }
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> handleNotFound(ResourceNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
+    }
 
-        // Implementing a global exception handler to catch any unhandled exceptions and 
-        // return a standardized error response with a 500 Internal Server Error status.
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<ErrorResponse> handleException(
-                Exception ex) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGeneric(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Internal server error"));
+    }
 
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(
-                                ErrorResponse.builder()
-                                        .timestamp(LocalDateTime.now())
-                                        .status(500)
-                                        .error("INTERNAL_SERVER_ERROR")
-                                        .message(ex.getMessage())
-                                        .build()
-                        );
-        }
-
-        // Implementing a global exception handler to catch validation errors (MethodArgumentNotValidException) and return a map of field errors with a 400 Bad Request status.
-        @ExceptionHandler(MethodArgumentNotValidException.class)
-        public ResponseEntity<Map<String, String>> handleValidation(
-                MethodArgumentNotValidException ex) {
-
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
         Map<String, String> errors = new HashMap<>();
-
-        ex.getBindingResult()
-                .getFieldErrors()
-                .forEach(error ->
-                        errors.put(
-                                error.getField(),
-                                error.getDefaultMessage()
-                        ));
-
-        return ResponseEntity.badRequest()
-                .body(errors);
-        }
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errors.put(error.getField(), error.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
+    }
 }

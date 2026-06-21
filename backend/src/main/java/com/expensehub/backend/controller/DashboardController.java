@@ -1,6 +1,8 @@
 package com.expensehub.backend.controller;
 
 import com.expensehub.backend.dto.DashboardResponse;
+import com.expensehub.backend.dto.MonthlyDashboardResponse;
+import com.expensehub.backend.dto.TransactionDto;
 import com.expensehub.backend.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -24,5 +26,21 @@ public class DashboardController {
         return dashboardService.getSummary(
                 authentication.getName()
         );
+    }
+
+    @GetMapping("/recent")
+    public java.util.List<TransactionDto> getRecent(
+            Authentication authentication,
+            @RequestParam(defaultValue = "5") int limit
+    ) {
+        return dashboardService.getRecentTransactions(authentication.getName(), limit);
+    }
+
+    @GetMapping("/monthly")
+    public MonthlyDashboardResponse getMonthly(
+            Authentication authentication,
+            @RequestParam String month // format YYYY-MM
+    ) {
+        return dashboardService.getMonthlySummary(authentication.getName(), month);
     }
 }

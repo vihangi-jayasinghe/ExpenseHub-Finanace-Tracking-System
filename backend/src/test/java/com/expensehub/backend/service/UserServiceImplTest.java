@@ -35,8 +35,6 @@ class UserServiceImplTest {
     @Mock
     private JwtService jwtService;
 
-    @Mock
-    private OtpService otpService;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -177,37 +175,5 @@ class UserServiceImplTest {
         when(passwordEncoder.matches("wrong_password", "encoded_password")).thenReturn(false);
 
         assertThrows(RuntimeException.class, () -> userService.login(request));
-    }
-
-    @Test
-    void processForgotPassword_Success() {
-        User user = User.builder().email("john@example.com").build();
-        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
-
-        userService.processForgotPassword("john@example.com");
-
-        verify(otpService, times(1)).generateOtp("john@example.com");
-    }
-
-    @Test
-    void resetPassword_Success() {
-        User user = User.builder().email("john@example.com").password("old_pass").build();
-        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
-        when(otpService.verifyOtp("john@example.com", "123456")).thenReturn(true);
-        when(passwordEncoder.encode("new_pass")).thenReturn("encoded_new_pass");
-
-        userService.resetPassword("john@example.com", "123456", "new_pass");
-
-        verify(userRepository, times(1)).save(user);
-        assertEquals("encoded_new_pass", user.getPassword());
-    }
-
-    @Test
-    void resetPassword_InvalidOtp() {
-        User user = User.builder().email("john@example.com").build();
-        when(userRepository.findByEmail("john@example.com")).thenReturn(Optional.of(user));
-        when(otpService.verifyOtp("john@example.com", "wrong")).thenReturn(false);
-
-        assertThrows(RuntimeException.class, () -> userService.resetPassword("john@example.com", "wrong", "new_pass"));
     }
 }

@@ -5,7 +5,6 @@ import com.expensehub.backend.dto.ExpenseResponse;
 import com.expensehub.backend.dto.UpdateExpenseRequest;
 import com.expensehub.backend.entity.Expense;
 import com.expensehub.backend.entity.User;
-import com.expensehub.backend.exception.ResourceNotFoundException;
 import com.expensehub.backend.repository.ExpenseRepository;
 import com.expensehub.backend.repository.UserRepository;
 import com.expensehub.backend.service.impl.ExpenseServiceImpl;

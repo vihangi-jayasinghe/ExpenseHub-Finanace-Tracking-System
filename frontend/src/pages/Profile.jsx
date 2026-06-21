@@ -66,7 +66,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-slate-500">
+      <div className="flex flex-col items-center justify-center min-h-75 gap-3 text-slate-500">
         <Loader2 size={36} className="animate-spin text-blue-600" />
         <span className="text-sm font-semibold">Loading profile information...</span>
       </div>

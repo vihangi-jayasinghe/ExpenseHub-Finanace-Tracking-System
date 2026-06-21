@@ -2,6 +2,7 @@ package com.expensehub.backend.service.impl;
 import com.expensehub.backend.dto.*;
 import com.expensehub.backend.entity.User;
 import com.expensehub.backend.exception.ResourceNotFoundException;
+import com.expensehub.backend.exception.UnauthorizedException;
 import com.expensehub.backend.repository.UserRepository;
 import com.expensehub.backend.service.UserService;
 import com.expensehub.backend.security.JwtService;
@@ -19,7 +20,7 @@ public class UserServiceImpl implements UserService{
         private final UserRepository userRepository;
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
-        private final com.expensehub.backend.service.OtpService otpService;
+        
 
         // Implementing the createUser method to create a new user.
         // It takes a RegisterUserRequest object as input, which contains the user's name, email, address, and password. 
@@ -134,20 +135,18 @@ public class UserServiceImpl implements UserService{
 
                 User user = userRepository
                         .findByEmail(request.getEmail())
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException(
-                                        "Invalid credentials"));
+                                .orElseThrow(() ->
+                                        new UnauthorizedException(
+                                                "Invalid credentials"));
 
-                if (!passwordEncoder.matches(
-                        request.getPassword(),
-                        user.getPassword())) {
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+            throw new UnauthorizedException("Invalid credentials");
+        }
 
-                throw new RuntimeException(
-                        "Invalid credentials");
-                }
-
-                return jwtService.generateToken(
-                        user.getEmail());
+        return jwtService.generateToken(
+                user.getEmail());
         }
 
         // Implementing the getUserByEmail method to retrieve a user by their email address.
@@ -163,25 +162,5 @@ public class UserServiceImpl implements UserService{
                         ));
 
         return map(user);
-        }
-
-        @Override
-        public void processForgotPassword(String email) {
-                User user = userRepository.findByEmail(email)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-                otpService.generateOtp(email);
-        }
-
-        @Override
-        public void resetPassword(String email, String otp, String newPassword) {
-                User user = userRepository.findByEmail(email)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-                if (!otpService.verifyOtp(email, otp)) {
-                        throw new RuntimeException("Invalid or expired OTP");
-                }
-
-                user.setPassword(passwordEncoder.encode(newPassword));
-                userRepository.save(user);
         }
 }

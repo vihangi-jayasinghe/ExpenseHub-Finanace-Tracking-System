@@ -48,6 +48,8 @@ export default function Dashboard() {
   const [summary, setSummary] = useState({ totalIncome: 0, totalExpenses: 0, balance: 0 })
   const [expenses, setExpenses] = useState([])
   const [incomes, setIncomes] = useState([])
+  const [recentTransactions, setRecentTransactions] = useState([])
+  const [monthlyData, setMonthlyData] = useState({ totalIncome: 0, totalExpenses: 0, highestExpenseCategory: 'N/A', highestExpenseAmount: 0 })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -62,12 +64,9 @@ export default function Dashboard() {
     setLoading(true)
     setError('')
 
-    Promise.all([
-      api.getSummary(),
-      api.getExpenses(),
-      api.getIncomes()
-    ])
-      .then(([summaryRes, expensesRes, incomesRes]) => {
+    // Use backend dashboard endpoints to minimize data transfer and leverage server-side aggregation
+    Promise.all([api.getSummary(), api.getRecent(5), api.getMonthly(selectedMonth)])
+      .then(([summaryRes, recentRes, monthlyRes]) => {
         if (summaryRes && typeof summaryRes === 'object') {
           setSummary({
             totalIncome: parseFloat(summaryRes.totalIncome || 0),
@@ -75,8 +74,31 @@ export default function Dashboard() {
             balance: parseFloat(summaryRes.balance || 0)
           })
         }
-        setExpenses(expensesRes || [])
-        setIncomes(incomesRes || [])
+
+        // recentRes is an array of TransactionDto
+        if (Array.isArray(recentRes)) {
+          setRecentTransactions(recentRes.map(r => ({
+            id: r.id,
+            title: r.title,
+            amount: parseFloat(r.amount || 0),
+            date: getLocalDateString(r.date),
+            type: r.type,
+            category: r.category,
+            description: r.description
+          })))
+        } else {
+          setRecentTransactions([])
+        }
+
+        // monthly summary contains totals and highest category
+        if (monthlyRes && typeof monthlyRes === 'object') {
+          setMonthlyData({
+            totalIncome: parseFloat(monthlyRes.totalIncome || 0),
+            totalExpenses: parseFloat(monthlyRes.totalExpenses || 0),
+            highestExpenseCategory: monthlyRes.highestExpenseCategory || 'N/A',
+            highestExpenseAmount: parseFloat(monthlyRes.highestExpenseAmount || 0)
+          })
+        }
       })
       .catch(err => {
         console.error('Failed to load dashboard data', err)
@@ -89,68 +111,25 @@ export default function Dashboard() {
       .finally(() => {
         setLoading(false)
       })
-  }, [navigate])
+  }, [navigate, selectedMonth])
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3 text-slate-500">
+      <div className="flex flex-col items-center justify-center min-h-100 gap-3 text-slate-500">
         <Loader2 size={36} className="animate-spin text-blue-600" />
         <span className="text-sm font-semibold">Retrieving secure financial records...</span>
       </div>
     )
   }
 
-  // --- Calculations for Monthly Filter ---
-  // Filter expenses and incomes by the selected month using the robust getYearMonthStr helper
-  const monthlyExpensesList = expenses.filter(e => getYearMonthStr(e.expenseDate) === selectedMonth)
-  const monthlyIncomesList = incomes.filter(i => getYearMonthStr(i.incomeDate) === selectedMonth)
+  // --- Monthly data comes from backend ---
+  const totalMonthlyExpenses = monthlyData.totalExpenses || 0
+  const totalMonthlyIncome = monthlyData.totalIncome || 0
+  const highestCategory = monthlyData.highestExpenseCategory || 'N/A'
+  const highestCategoryAmount = monthlyData.highestExpenseAmount || 0
 
-  const totalMonthlyExpenses = monthlyExpensesList.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0)
-  const totalMonthlyIncome = monthlyIncomesList.reduce((acc, curr) => acc + parseFloat(curr.amount || 0), 0)
-
-  // Find the highest expense category for the selected month
-  const categorySums = {}
-  monthlyExpensesList.forEach(e => {
-    const cat = e.category || 'Other'
-    categorySums[cat] = (categorySums[cat] || 0) + parseFloat(e.amount || 0)
-  })
-
-  let highestCategory = 'N/A'
-  let highestCategoryAmount = 0
-  Object.entries(categorySums).forEach(([cat, amt]) => {
-    if (amt > highestCategoryAmount) {
-      highestCategoryAmount = amt
-      highestCategory = cat
-    }
-  })
-
-  // --- Calculations for Recent Transactions ---
-  // Merge, normalize, and sort recent transactions
-  const normalizedExpenses = expenses.map(e => ({
-    id: `exp-${e.id}`,
-    title: e.title,
-    amount: parseFloat(e.amount || 0),
-    date: getLocalDateString(e.expenseDate),
-    type: 'expense',
-    category: e.category,
-    description: e.description
-  }))
-
-  const normalizedIncomes = incomes.map(i => ({
-    id: `inc-${i.id}`,
-    title: i.source,
-    amount: parseFloat(i.amount || 0),
-    date: getLocalDateString(i.incomeDate),
-    type: 'income',
-    category: 'Income',
-    description: i.description
-  }))
-
-  const allTransactions = [...normalizedExpenses, ...normalizedIncomes]
-    .filter(t => t.date)
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-
-  const latestTransactions = allTransactions.slice(0, 5)
+  // Recent transactions are provided by the backend
+  const latestTransactions = recentTransactions.slice(0, 5)
 
   return (
     <div className="space-y-8 animate-fadeIn">
@@ -220,7 +199,7 @@ export default function Dashboard() {
 
         {/* Balance Card */}
         <div className={`border rounded-3xl p-6 shadow-sm hover:shadow-md transition-all relative overflow-hidden flex flex-col justify-between ${
-          summary.balance >= 0 ? 'bg-gradient-to-tr from-blue-50/50 via-white to-indigo-50/20 border-blue-100' : 'bg-rose-50/20 border-rose-100'
+          summary.balance >= 0 ? 'bg-linear-to-tr from-blue-50/50 via-white to-indigo-50/20 border-blue-100' : 'bg-rose-50/20 border-rose-100'
         }`}>
           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 blur-2xl rounded-full" />
           <div>
@@ -265,13 +244,13 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Monthly Income</span>
-            <h4 className="text-xl font-bold text-slate-800 mt-1 text-emerald-600">
+            <h4 className="text-xl font-bold mt-1 text-emerald-600">
               ${totalMonthlyIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h4>
           </div>
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Monthly Expenses</span>
-            <h4 className="text-xl font-bold text-slate-800 mt-1 text-rose-600">
+            <h4 className="text-xl font-bold mt-1 text-rose-600">
               ${totalMonthlyExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h4>
           </div>

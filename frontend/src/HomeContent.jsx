@@ -10,7 +10,7 @@ export default function HomeContent() {
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer">
           <img src={logoUrl} alt="ExpenseHub Logo" className="h-10 w-auto object-contain rounded-xl shadow-sm" />
-          <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <span className="font-bold text-xl tracking-tight bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             ExpenseHub
           </span>
         </div>
@@ -35,8 +35,8 @@ export default function HomeContent() {
       <main className="flex-1">
         <section className="relative px-6 pt-16 pb-20 md:pt-24 md:pb-28 max-w-7xl mx-auto flex flex-col items-center text-center">
           {/* Subtle decorative background gradients */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-400/10 blur-[100px] rounded-full pointer-events-none -z-10" />
-          <div className="absolute top-1/3 left-1/3 w-[300px] h-[300px] bg-indigo-400/10 blur-[80px] rounded-full pointer-events-none -z-10" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 bg-blue-400/10 blur-[100px] rounded-full pointer-events-none -z-10" />
+          <div className="absolute top-1/3 left-1/3 w-75 h-75 bg-indigo-400/10 blur-[80px] rounded-full pointer-events-none -z-10" />
 
           {/* Badge */}
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-xs font-semibold mb-6">
@@ -46,7 +46,7 @@ export default function HomeContent() {
 
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 max-w-4xl leading-tight">
             Track your expenses.{' '}
-            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               Grow your savings.
             </span>
           </h1>

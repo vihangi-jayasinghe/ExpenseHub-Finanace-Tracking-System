@@ -11,7 +11,7 @@ export default function TermsOfService() {
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
           <img src={logoUrl} alt="ExpenseHub Logo" className="h-10 w-auto object-contain rounded-xl shadow-sm" />
-          <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <span className="font-bold text-xl tracking-tight bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             ExpenseHub
           </span>
         </div>

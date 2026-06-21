@@ -1,6 +1,6 @@
 # ExpenseHub - Finance Tracking System
 
-A secure, high-fidelity web application built for Sri Lanka Telecom (Services) Limited take-home assessment. This application allows users to record, manage, and analyze their daily expenses and incomes through a clean, modern, and highly responsive dashboard interface.
+A secure, high-fidelity web application built for Sri Lanka Telecom (Services) Limited take-home assessment. This project lets users record, manage, and analyze daily expenses and incomes through a clean, modern dashboard UI.
 
 ---
 
@@ -47,64 +47,106 @@ A secure, high-fidelity web application built for Sri Lanka Telecom (Services) L
 
 ---
 
-## 💻 Local Development Setup (Manual)
+## Badges
 
-### 1. Database Setup
-Create a PostgreSQL database named `expensehub` on port `5432` with username `postgres` and password `root`. (If your local credentials differ, update them in `backend/src/main/resources/application.properties`).
-
-### 2. Run Backend API
-```bash
-cd backend
-# Compile and run the Spring Boot app
-./mvnw spring-boot:run
-```
-* The server starts at [http://localhost:8080](http://localhost:8080).
-
-### 3. Run Frontend UI
-```bash
-cd frontend
-# Install packages
-npm install
-
-# Run Vite dev server
-npm run dev
-```
-* The web app will be served at the URL printed in your terminal (usually [http://localhost:5173](http://localhost:5173)).
+- Build: (local)  
+- Tests: (local)  
 
 ---
 
-## 🧪 Running Test Suites
+## Getting Started
 
-To execute the unit and integration tests on the Spring Boot backend:
+Minimal steps to run the project locally. The application expects a PostgreSQL database by default — you can override via `application.properties` or environment variables.
+
+1. Database (Postgres) — create a database named `expensehub` (or adjust `backend/src/main/resources/application.properties`):
+
+    - JDBC URL: `jdbc:postgresql://localhost:5432/expensehub`
+    - Username: `postgres`
+    - Password: `root`
+
+2. Run backend (from project root):
+
+```bash
+cd backend
+# Windows
+./mvnw.cmd spring-boot:run
+# macOS / Linux
+./mvnw spring-boot:run
+```
+
+3. Run frontend (from project root):
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Default dev ports: backend `8080`, frontend `5173` (vite may pick another free port).
+
+---
+
+## 🧪 Development & Testing
+
+Run backend tests:
+
 ```bash
 cd backend
 ./mvnw test
 ```
 
----
+Run frontend locally:
 
-## 📂 Architecture & Component Boundaries
-
-The system is split into three clean layers following the **DB → Backend API → Frontend SPA** architecture pattern:
-
-```mermaid
-graph LR
-    subgraph Client-Side [Frontend SPA]
-        Vite[Vite + React 19] --> Tailwind[Tailwind CSS v4]
-        Vite --> Router[SPA Client Router]
-    end
-
-    subgraph Server-Side [Backend API]
-        SpringSec[Spring Security Filters] --> Controllers[REST Controllers]
-        Controllers --> Services[Business Services]
-        Services --> JPA[Spring Data JPA]
-    end
-
-    subgraph Data-Store [Database]
-        JPA --> PostgreSQL[(PostgreSQL DB)]
-    end
+```bash
+cd frontend
+npm run dev
 ```
 
-1. **Database Layer**: Implements schemas, primary keys, and foreign keys mapping between Users, Expenses, and Incomes.
-2. **Backend Controller/Service Layer**: REST Controllers consume and emit validated DTO payloads (e.g. `RegisterUserRequest`, `DashboardResponse`). Services execute security contexts, hashing, and JPA queries.
-3. **Frontend SPA Layer**: Coordinates fetch requests with custom local storage authorization headers, manages React client states, and updates dashboard metrics.
+---
+
+## API Reference (Key Endpoints)
+
+All API endpoints are prefixed with `/api` and expect JSON. Authenticated endpoints require a `Bearer <JWT>` Authorization header.
+
+- Authentication
+    - POST `/api/auth/login` — body: `{ "email": "user@example.com", "password": "..." }`
+        - Response: `{ "token": "<jwt>" }`
+
+- Users
+    - POST `/api/users` — register: `{ name, email, address, password }` → returns `UserResponse`.
+    - GET `/api/users/profile` — (authenticated) returns the current user's details.
+    - PUT `/api/users/{id}` — update user (name, address).
+    - DELETE `/api/users/{id}` — delete user.
+
+- Expenses
+    - GET `/api/expenses` — list expenses for authenticated user.
+    - POST `/api/expenses` — create expense.
+    - PUT `/api/expenses/{id}` — update expense.
+    - DELETE `/api/expenses/{id}` — delete expense.
+
+- Incomes
+    - GET `/api/income` — list incomes for authenticated user.
+    - POST `/api/income` — create income.
+    - PUT `/api/income/{id}` — update income.
+    - DELETE `/api/income/{id}` — delete income.
+
+- Dashboard (server-side analytics)
+    - GET `/api/dashboard/summary` — returns all-time `totalIncome`, `totalExpenses`, `balance`.
+        - Example response:
+            ```json
+            { "totalIncome": 1000.00, "totalExpenses": 750.00, "balance": 250.00 }
+            ```
+    - GET `/api/dashboard/recent?limit=5` — latest N transactions (merged incomes & expenses, sorted by date).
+        - Example response:
+            ```json
+            [
+                { "id":"exp-1","title":"Lunch","amount":12.5,"date":"2026-06-21","type":"expense","category":"Food","description":"" }
+            ]
+            ```
+    - GET `/api/dashboard/monthly?month=YYYY-MM` — monthly totals and highest expense category for the specified month.
+        - Example response:
+            ```json
+            { "totalIncome": 500.0, "totalExpenses": 300.0, "highestExpenseCategory": "Food", "highestExpenseAmount": 120.0 }
+            ```
+
+

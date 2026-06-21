@@ -19,11 +19,12 @@ export const api = {
   // auth
   login: (body) => request('/api/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   register: (body) => request('/api/users', { method: 'POST', body: JSON.stringify(body) }),
-  forgotPassword: (body) => request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(body) }),
-  resetPassword: (body) => request('/api/auth/reset-password', { method: 'POST', body: JSON.stringify(body) }),
+  // removed forgot/reset password (OTP) endpoints — handled client-side or removed
 
   // dashboard
   getSummary: () => request('/api/dashboard/summary'),
+  getRecent: (limit = 5) => request(`/api/dashboard/recent?limit=${limit}`),
+  getMonthly: (month) => request(`/api/dashboard/monthly?month=${encodeURIComponent(month)}`),
 
   // expenses
   getExpenses: () => request('/api/expenses'),

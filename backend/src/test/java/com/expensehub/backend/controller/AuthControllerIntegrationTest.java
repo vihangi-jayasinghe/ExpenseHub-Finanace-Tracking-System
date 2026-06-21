@@ -93,6 +93,6 @@ class AuthControllerIntegrationTest {
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isInternalServerError()); // Since UserServiceImpl throws RuntimeException
+                .andExpect(status().isUnauthorized()); // invalid credentials should return 401
     }
 }

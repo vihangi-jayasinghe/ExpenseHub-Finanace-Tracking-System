@@ -81,7 +81,7 @@ export default function Register() {
       <div className="w-full max-w-5xl bg-white rounded-3xl border border-slate-200/60 shadow-2xl flex flex-col md:flex-row overflow-hidden relative z-10">
         
         {/* Left pane: Branding & Marketing info */}
-        <div className="flex-1 bg-gradient-to-tr from-slate-900 via-slate-800 to-indigo-950 p-8 sm:p-12 flex flex-col justify-between text-white relative">
+        <div className="flex-1 bg-linear-to-tr from-slate-900 via-slate-800 to-indigo-950 p-8 sm:p-12 flex flex-col justify-between text-white relative">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(37,99,235,0.15),transparent)] pointer-events-none" />
           
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
@@ -91,7 +91,7 @@ export default function Register() {
 
           <div className="my-12 md:my-0">
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-              Create an account & start <span className="bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">growing.</span>
+              Create an account & start <span className="bg-linear-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">growing.</span>
             </h2>
             <p className="mt-4 text-slate-300 text-sm sm:text-base max-w-sm leading-relaxed">
               Track salaries, investments, daily expenses and more within a secure dashboard setup.

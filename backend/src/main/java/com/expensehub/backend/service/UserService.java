@@ -25,8 +25,4 @@ public interface UserService {
     String login(LoginRequest request);
 
     UserResponse getUserByEmail(String email);
-
-    void processForgotPassword(String email);
-
-    void resetPassword(String email, String otp, String newPassword);
 }
