@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { TrendingUp, ArrowRight, User, Mail, MapPin, Lock, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react'
+import { TrendingUp, ArrowRight, User, Mail, MapPin, Lock, Eye, EyeOff, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react'
 import { api } from '../services/api'
 import logoUrl from '../assets/Logo.jpg'
 
@@ -11,6 +11,8 @@ export default function Register() {
   const [address, setAddress] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [touched, setTouched] = useState({})
   const [errorMsg, setErrorMsg] = useState('')
   const [loading, setLoading] = useState(false)
@@ -57,6 +59,9 @@ export default function Register() {
         setLoading(false)
       })
   }
+
+  function toggleShowPassword() { setShowPassword(s => !s) }
+  function toggleShowConfirm() { setShowConfirm(s => !s) }
 
   const strengthLabels = ['Very weak', 'Weak', 'Okay', 'Good', 'Strong']
   const strengthColors = [
@@ -234,12 +239,12 @@ export default function Register() {
                     <Lock size={18} />
                   </span>
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     aria-label="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl border ${
+                    className={`w-full pl-10 pr-12 py-2.5 rounded-xl border ${
                       touched.password && password.length < 6
                         ? 'border-rose-400 focus:ring-rose-100'
                         : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
@@ -248,6 +253,9 @@ export default function Register() {
                     disabled={loading}
                     required
                   />
+                  <button type="button" onClick={toggleShowPassword} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
                 {password.length > 0 && (
                   <div className="mt-2">
@@ -281,12 +289,12 @@ export default function Register() {
                     <Lock size={18} />
                   </span>
                   <input
-                    type="password"
+                    type={showConfirm ? 'text' : 'password'}
                     aria-label="Confirm password"
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
                     onBlur={() => setTouched((t) => ({ ...t, confirm: true }))}
-                    className={`w-full pl-10 pr-4 py-2.5 rounded-xl border ${
+                    className={`w-full pl-10 pr-12 py-2.5 rounded-xl border ${
                       touched.confirm && password !== confirm
                         ? 'border-rose-400 focus:ring-rose-100'
                         : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
@@ -295,6 +303,9 @@ export default function Register() {
                     disabled={loading}
                     required
                   />
+                  <button type="button" onClick={toggleShowConfirm} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                    {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
                 {touched.confirm && password !== confirm && (
                   <p className="text-xs text-rose-600 mt-1.5 flex items-center gap-1 font-medium">

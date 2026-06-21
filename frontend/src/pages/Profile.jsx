@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { User, Mail, MapPin, Loader2, Save, BadgeCheck } from 'lucide-react'
+import { User, Mail, MapPin, Loader2, Save, BadgeCheck, Trash2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import FormInput from '../components/FormInput'
 import { api } from '../services/api'
 
@@ -9,6 +10,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     setLoading(true)
@@ -150,6 +152,29 @@ export default function Profile() {
                   <span>Save Profile</span>
                 </>
               )}
+            </button>
+            <button
+              onClick={() => {
+                if (!profile.id) return
+                if (!window.confirm('Delete your profile? This action cannot be undone.')) return
+                setSaving(true)
+                api.deleteProfile(profile.id)
+                  .then(() => {
+                    // clear token and redirect to login/home
+                    localStorage.removeItem('token')
+                    navigate('/login')
+                  })
+                  .catch(err => {
+                    console.error('Failed to delete profile', err)
+                    setErrorMsg(err.message || 'Failed to delete profile.')
+                  })
+                  .finally(() => setSaving(false))
+              }}
+              disabled={saving}
+              className="ml-3 flex items-center gap-1.5 px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50"
+            >
+              <Trash2 size={14} />
+              <span>Delete Profile</span>
             </button>
           </div>
         </div>

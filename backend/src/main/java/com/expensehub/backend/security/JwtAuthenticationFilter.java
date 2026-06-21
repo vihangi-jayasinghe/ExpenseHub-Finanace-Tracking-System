@@ -39,8 +39,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         String token =
                 authHeader.substring(7);
 
-        String email =
-                jwtService.extractUsername(token);
+        try {
+        String email = null;
+        try {
+            email = jwtService.extractUsername(token);
+        } catch (Exception ex) {
+            // Invalid or malformed token — ignore and continue the filter chain so
+            // publicly permitted endpoints (e.g. registration) still work.
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (email != null &&
                 SecurityContextHolder
@@ -71,6 +79,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                         .getContext()
                         .setAuthentication(authToken);
             }
+        }
+        } catch (Exception ex) {
+            // Invalid or malformed JWT — ignore and continue without authentication.
         }
 
         filterChain.doFilter(request, response);

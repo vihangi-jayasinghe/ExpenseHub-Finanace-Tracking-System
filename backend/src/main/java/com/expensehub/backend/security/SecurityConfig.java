@@ -42,6 +42,7 @@ public class SecurityConfig {
                                         "/v3/api-docs/**",// Allow access to API docs
                                         "/swagger-ui.html"
                                 ).permitAll()
+                                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/users").permitAll()
                                 .anyRequest()
                                 .authenticated()
                 )

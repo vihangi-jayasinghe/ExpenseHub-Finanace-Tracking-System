@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService{
         private final UserRepository userRepository;
         private final PasswordEncoder passwordEncoder;
         private final JwtService jwtService;
+        private final com.expensehub.backend.service.OtpService otpService;
 
         // Implementing the createUser method to create a new user.
         // It takes a RegisterUserRequest object as input, which contains the user's name, email, address, and password. 
@@ -162,5 +163,25 @@ public class UserServiceImpl implements UserService{
                         ));
 
         return map(user);
+        }
+
+        @Override
+        public void processForgotPassword(String email) {
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                otpService.generateOtp(email);
+        }
+
+        @Override
+        public void resetPassword(String email, String otp, String newPassword) {
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+                if (!otpService.verifyOtp(email, otp)) {
+                        throw new RuntimeException("Invalid or expired OTP");
+                }
+
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(user);
         }
 }

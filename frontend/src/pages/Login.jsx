@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { TrendingUp, ArrowRight, Mail, Lock, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react'
+import { TrendingUp, ArrowRight, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, ShieldCheck } from 'lucide-react'
 import { api } from '../services/api'
 import logoUrl from '../assets/Logo.jpg'
 
@@ -13,12 +13,18 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [valid, setValid] = useState(false)
 
+  const [showPassword, setShowPassword] = useState(false)
+
   useEffect(() => {
     setValid(validateEmail(email) && password.length >= 6)
   }, [email, password])
 
   function validateEmail(val) {
     return /^\S+@\S+\.\S+$/.test(val)
+  }
+
+  function toggleShowPassword() {
+    setShowPassword(s => !s)
   }
 
   function handleSubmit(ev) {
@@ -94,129 +100,132 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Right pane: Login form */}
+        {/* Right pane: Form container */}
         <div className="flex-1 p-8 sm:p-12 flex flex-col justify-center bg-white">
           <div className="w-full max-w-md mx-auto">
-            {/* Navigation links */}
-            <div className="flex bg-slate-100 p-1.5 rounded-xl gap-2 mb-8">
-              <button className="flex-1 py-2 text-center text-sm font-semibold rounded-lg bg-white shadow-sm text-slate-800 transition-all">
-                Login
-              </button>
-              <Link to="/register" className="flex-1 py-2 text-center text-sm font-semibold text-slate-500 hover:text-slate-800 transition-all">
-                Register
-              </Link>
-            </div>
-
-            <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h3>
-            <p className="text-slate-500 text-sm mt-1">Enter your credentials to manage your account.</p>
-
-            {errorMsg && (
-              <div className="mt-6 p-4 rounded-xl bg-rose-50 border border-rose-100 flex items-start gap-3 text-sm text-rose-800 animate-fadeIn">
-                <AlertCircle size={18} className="shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-semibold">Authentication failure</span>
-                  <p className="mt-0.5 text-rose-700/90">{errorMsg}</p>
+            <>
+                {/* Navigation links */}
+                <div className="flex bg-slate-100 p-1.5 rounded-xl gap-2 mb-8">
+                  <button className="flex-1 py-2 text-center text-sm font-semibold rounded-lg bg-white shadow-sm text-slate-800 transition-all">
+                    Login
+                  </button>
+                  <Link to="/register" className="flex-1 py-2 text-center text-sm font-semibold text-slate-500 hover:text-slate-800 transition-all">
+                    Register
+                  </Link>
                 </div>
-              </div>
+
+                <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h3>
+                <p className="text-slate-500 text-sm mt-1">Enter your credentials to manage your account.</p>
+
+                {errorMsg && (
+                  <div className="mt-6 p-4 rounded-xl bg-rose-50 border border-rose-100 flex items-start gap-3 text-sm text-rose-800 animate-fadeIn">
+                    <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-semibold">Authentication failure</span>
+                      <p className="mt-0.5 text-rose-700/90">{errorMsg}</p>
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="mt-6 space-y-5" noValidate>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                        <Mail size={18} />
+                      </span>
+                      <input
+                        type="email"
+                        aria-label="Email address"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+                        className={`w-full pl-10 pr-4 py-3 rounded-xl border ${
+                          touched.email && !validateEmail(email)
+                            ? 'border-rose-400 focus:ring-rose-100'
+                            : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
+                        } focus:outline-none focus:ring-4 text-slate-800 text-sm transition-all`}
+                        placeholder="name@company.com"
+                        disabled={loading}
+                        required
+                      />
+                    </div>
+                    {touched.email && !validateEmail(email) && (
+                      <p className="text-xs text-rose-600 mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={12} /> Please enter a valid email address.
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="mb-2">
+                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
+                          Password
+                        </label>
+                      </div>
+                      <div className="relative">
+                        <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                          <Lock size={18} />
+                        </span>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          aria-label="Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+                          className={`w-full pl-10 pr-12 py-3 rounded-xl border ${
+                            touched.password && password.length < 6
+                              ? 'border-rose-400 focus:ring-rose-100'
+                              : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
+                          } focus:outline-none focus:ring-4 text-slate-800 text-sm transition-all`}
+                          placeholder="••••••••"
+                          disabled={loading}
+                          required
+                        />
+                        <button type="button" onClick={toggleShowPassword} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
+                    {touched.password && password.length < 6 && (
+                      <p className="text-xs text-rose-600 mt-1.5 flex items-center gap-1 font-medium">
+                        <AlertCircle size={12} /> Password must be at least 6 characters.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="remember"
+                      className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="remember" className="text-sm text-slate-600 cursor-pointer">
+                      Remember this device
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={!valid || loading}
+                    className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        <span>Signing in...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Sign In</span>
+                        <ArrowRight size={16} />
+                      </>
+                    )}
+                  </button>
+                </form>
+              </>
             )}
-
-            <form onSubmit={handleSubmit} className="mt-6 space-y-5" noValidate>
-              <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
-                    <Mail size={18} />
-                  </span>
-                  <input
-                    type="email"
-                    aria-label="Email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl border ${
-                      touched.email && !validateEmail(email)
-                        ? 'border-rose-400 focus:ring-rose-100'
-                        : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
-                    } focus:outline-none focus:ring-4 text-slate-800 text-sm transition-all`}
-                    placeholder="name@company.com"
-                    disabled={loading}
-                    required
-                  />
-                </div>
-                {touched.email && !validateEmail(email) && (
-                  <p className="text-xs text-rose-600 mt-1.5 flex items-center gap-1 font-medium">
-                    <AlertCircle size={12} /> Please enter a valid email address.
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider">
-                    Password
-                  </label>
-                  <a className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors" href="#forgot">
-                    Forgot Password?
-                  </a>
-                </div>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
-                    <Lock size={18} />
-                  </span>
-                  <input
-                    type="password"
-                    aria-label="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl border ${
-                      touched.password && password.length < 6
-                        ? 'border-rose-400 focus:ring-rose-100'
-                        : 'border-slate-200 focus:border-blue-500 focus:ring-blue-100'
-                    } focus:outline-none focus:ring-4 text-slate-800 text-sm transition-all`}
-                    placeholder="••••••••"
-                    disabled={loading}
-                    required
-                  />
-                </div>
-                {touched.password && password.length < 6 && (
-                  <p className="text-xs text-rose-600 mt-1.5 flex items-center gap-1 font-medium">
-                    <AlertCircle size={12} /> Password must be at least 6 characters.
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
-                />
-                <label htmlFor="remember" className="text-sm text-slate-600 cursor-pointer">
-                  Remember this device
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                disabled={!valid || loading}
-                className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" />
-                    <span>Signing in...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Sign In</span>
-                    <ArrowRight size={16} />
-                  </>
-                )}
-              </button>
-            </form>
           </div>
         </div>
 

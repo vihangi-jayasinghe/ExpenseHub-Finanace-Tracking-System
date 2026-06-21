@@ -19,6 +19,8 @@ export const api = {
   // auth
   login: (body) => request('/api/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   register: (body) => request('/api/users', { method: 'POST', body: JSON.stringify(body) }),
+  forgotPassword: (body) => request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(body) }),
+  resetPassword: (body) => request('/api/auth/reset-password', { method: 'POST', body: JSON.stringify(body) }),
 
   // dashboard
   getSummary: () => request('/api/dashboard/summary'),
@@ -40,6 +42,7 @@ export const api = {
   // profile
   getProfile: () => request('/api/users/profile'),
   updateProfile: (id, body) => request(`/api/users/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+  deleteProfile: (id) => request(`/api/users/${id}`, { method: 'DELETE' }),
 }
 
 export default api

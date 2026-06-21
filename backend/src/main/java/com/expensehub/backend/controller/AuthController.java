@@ -16,4 +16,14 @@ public class AuthController {
     public AuthResponse login(@RequestBody LoginRequest request) {
         return new AuthResponse(userService.login(request));
     }
+
+    @PostMapping("/forgot-password")
+    public void forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        userService.processForgotPassword(request.getEmail());
+    }
+
+    @PostMapping("/reset-password")
+    public void resetPassword(@RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request.getEmail(), request.getOtp(), request.getNewPassword());
+    }
 }
