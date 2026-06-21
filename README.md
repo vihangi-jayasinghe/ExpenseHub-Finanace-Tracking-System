@@ -137,6 +137,9 @@ All API endpoints are prefixed with `/api` and expect JSON. Authenticated endpoi
             ]
             ```
     - GET `/api/dashboard/monthly?month=YYYY-MM` — monthly totals and highest expense category for the specified month.
-        
+         - Example response:
+            ```json
+            { "totalIncome": 500.0, "totalExpenses": 300.0, "highestExpenseCategory": "Food", "highestExpenseAmount": 120.0 }
+            ```
 
 
