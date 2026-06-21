@@ -1,0 +1,36 @@
+:root{
+  --bg:#f6f8fa;
+  --card:#ffffff;
+  --muted:#6b7280;
+  --primary:#2563eb;
+  --danger:#ef4444;
+  --surface:#eef2ff;
+}
+*{box-sizing:border-box}
+body{font-family:Inter,Segoe UI,Helvetica,Arial,sans-serif;background:var(--bg);margin:0;color:#0f172a}
+.app-root{min-height:100vh}
+.site-header{height:64px;background:linear-gradient(90deg,#fff,#f8fafc);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid #e6eef8}
+.brand{font-weight:700;font-size:18px;cursor:pointer}
+.app-body{display:flex;align-items:stretch}
+.sidebar{width:220px;border-right:1px solid #eef2ff;padding:20px;background:linear-gradient(180deg,var(--surface),transparent)}
+.sidebar ul{list-style:none;padding:0;margin:0}
+.sidebar a{display:block;padding:8px 6px;color:#0f172a;text-decoration:none;border-radius:6px}
+.sidebar a.active,.sidebar a:hover{background:#e8f0ff}
+.app-main{flex:1;padding:24px}
+.card{background:var(--card);padding:16px;border-radius:10px;box-shadow:0 1px 2px rgba(12,14,20,0.04);margin-bottom:12px}
+.card-title{margin:0 0 8px 0;font-size:14px;color:var(--muted)}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.big{font-size:20px;font-weight:700}
+.page-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.table{width:100%;border-collapse:collapse;background:var(--card)}
+.table th,.table td{padding:12px;border-bottom:1px solid #f1f5f9}
+.muted{color:var(--muted)}
+.btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(12,14,20,0.06);background:transparent;cursor:pointer;margin-left:6px}
+.btn.primary{background:var(--primary);color:white;border:none}
+.btn.ghost{background:transparent}
+.btn.danger{background:var(--danger);color:white;border:none}
+.form-row{display:flex;align-items:center;margin:6px 0}
+.form-row .form-label{width:160px;color:var(--muted)}
+.input{padding:8px 10px;border-radius:8px;border:1px solid #e6eef8;width:300px}
+.stack > *{margin-bottom:8px}
+.page-row .btn{margin-left:8px}
