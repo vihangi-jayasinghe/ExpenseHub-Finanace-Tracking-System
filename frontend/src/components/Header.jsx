@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { TrendingUp, User, LogOut, LayoutDashboard, Wallet, CreditCard } from 'lucide-react'
 import { api } from '../services/api'
+import logoUrl from '../assets/Logo.jpg'
 
 export default function Header() {
   const navigate = useNavigate()
@@ -35,9 +36,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(token ? '/dashboard' : '/')}>
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/10">
-          <TrendingUp size={20} className="stroke-[2.5]" />
-        </div>
+        <img src={logoUrl} alt="ExpenseHub Logo" className="h-9 w-auto object-contain rounded-xl shadow-sm" />
         <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
           ExpenseHub
         </span>

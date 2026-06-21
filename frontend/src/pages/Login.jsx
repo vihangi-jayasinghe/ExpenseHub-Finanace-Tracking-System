@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { TrendingUp, ArrowRight, Mail, Lock, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react'
 import { api } from '../services/api'
+import logoUrl from '../assets/Logo.jpg'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -60,9 +61,7 @@ export default function Login() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(37,99,235,0.15),transparent)] pointer-events-none" />
           
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-              <TrendingUp size={20} className="stroke-[2.5]" />
-            </div>
+            <img src={logoUrl} alt="ExpenseHub Logo" className="h-9 w-auto object-contain rounded-xl shadow-sm" />
             <span className="font-bold text-lg tracking-tight">ExpenseHub</span>
           </div>
 

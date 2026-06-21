@@ -9,6 +9,10 @@ import ExpenseForm from './pages/ExpenseForm'
 import IncomeList from './pages/IncomeList'
 import IncomeForm from './pages/IncomeForm'
 import Profile from './pages/Profile'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import Security from './pages/Security'
+import About from './pages/About'
+import TermsOfService from './pages/TermsOfService'
 import MainLayout from './layouts/MainLayout'
 import './App.css'
 
@@ -22,6 +26,12 @@ export default function App() {
         {/* Auth pages */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Info pages */}
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/security" element={<Security />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
 
         {/* Dashboard and related tracker pages under Layout shell */}
         <Route element={<MainLayout />}>

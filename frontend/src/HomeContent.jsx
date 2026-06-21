@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, BarChart3, Shield, Sparkles, TrendingUp, Wallet } from 'lucide-react'
+import logoUrl from './assets/Logo.jpg'
 
 export default function HomeContent() {
   return (
@@ -8,9 +9,7 @@ export default function HomeContent() {
       {/* Navigation Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 cursor-pointer">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-            <TrendingUp size={22} className="stroke-[2.5]" />
-          </div>
+          <img src={logoUrl} alt="ExpenseHub Logo" className="h-10 w-auto object-contain rounded-xl shadow-sm" />
           <span className="font-bold text-xl tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
             ExpenseHub
           </span>
@@ -18,8 +17,8 @@ export default function HomeContent() {
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
           <a href="#features" className="hover:text-blue-600 transition-colors">Features</a>
-          <a href="#security" className="hover:text-blue-600 transition-colors">Security</a>
-          <a href="#about" className="hover:text-blue-600 transition-colors">About</a>
+          <Link to="/security" className="hover:text-blue-600 transition-colors">Security</Link>
+          <Link to="/about" className="hover:text-blue-600 transition-colors">About</Link>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -70,41 +69,6 @@ export default function HomeContent() {
             >
               Sign In
             </Link>
-          </div>
-
-          {/* Interactive UI Mockup */}
-          <div className="mt-16 w-full max-w-5xl rounded-2xl border border-slate-200/80 bg-white p-4 shadow-2xl shadow-slate-200/50 relative overflow-hidden">
-            <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
-              <div className="w-3 w-3 h-3 rounded-full bg-rose-400" />
-              <div className="w-3 w-3 h-3 rounded-full bg-amber-400" />
-              <div className="w-3 w-3 h-3 rounded-full bg-emerald-400" />
-              <span className="text-xs text-slate-400 ml-2 font-medium">demo-dashboard.expensehub.com</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 text-left">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Balance</span>
-                <h3 className="text-2xl font-bold text-slate-800 mt-1">$4,850.00</h3>
-                <span className="text-xs text-emerald-600 font-medium mt-1 inline-block">↑ 12.3% from last month</span>
-              </div>
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 text-left">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Income</span>
-                <h3 className="text-2xl font-bold text-slate-800 mt-1">$7,200.00</h3>
-                <span className="text-xs text-slate-400 font-medium mt-1 inline-block">Active this month</span>
-              </div>
-              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 text-left">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Expenses</span>
-                <h3 className="text-2xl font-bold text-slate-800 mt-1">$2,350.00</h3>
-                <span className="text-xs text-rose-500 font-medium mt-1 inline-block">32.6% of allocation</span>
-              </div>
-            </div>
-
-            <div className="h-48 bg-gradient-to-t from-slate-50/50 to-transparent rounded-xl border border-dashed border-slate-200 flex items-center justify-center">
-              <div className="flex flex-col items-center gap-2 text-slate-400">
-                <BarChart3 size={32} />
-                <span className="text-sm font-semibold">Real-time analytical graphs</span>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -162,17 +126,15 @@ export default function HomeContent() {
       <footer className="bg-white border-t border-slate-100 py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
-              <TrendingUp size={16} />
-            </div>
+            <img src={logoUrl} alt="ExpenseHub Logo" className="h-8 w-auto object-contain rounded-xl shadow-sm" />
             <span className="font-bold text-slate-800">ExpenseHub</span>
           </div>
           <p className="text-sm text-slate-500">
             © 2026 ExpenseHub. Built with precision for smart financial growth.
           </p>
           <div className="flex gap-4 text-xs font-semibold text-slate-500">
-            <a href="#" className="hover:text-blue-600">Privacy Policy</a>
-            <a href="#" className="hover:text-blue-600">Terms of Service</a>
+            <Link to="/privacy-policy" className="hover:text-blue-600">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:text-blue-600">Terms of Service</Link>
           </div>
         </div>
       </footer>

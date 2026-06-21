@@ -87,14 +87,11 @@ export default function ExpenseForm() {
   }
 
   const categories = [
-    'Food & Dining',
-    'Rent & Utilities',
-    'Transportation',
-    'Entertainment',
+    'Food',
+    'Transport',
+    'Bills',
     'Shopping',
-    'Health & Medical',
-    'Travel',
-    'Work & Business',
+    'Entertainment',
     'Other'
   ]
 
