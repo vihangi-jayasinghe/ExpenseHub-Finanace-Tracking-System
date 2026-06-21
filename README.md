@@ -47,13 +47,6 @@ A secure, high-fidelity web application built for Sri Lanka Telecom (Services) L
 
 ---
 
-## Badges
-
-- Build: (local)  
-- Tests: (local)  
-
----
-
 ## Getting Started
 
 Minimal steps to run the project locally. The application expects a PostgreSQL database by default — you can override via `application.properties` or environment variables.
@@ -62,7 +55,7 @@ Minimal steps to run the project locally. The application expects a PostgreSQL d
 
     - JDBC URL: `jdbc:postgresql://localhost:5432/expensehub`
     - Username: `postgres`
-    - Password: `root`
+    - Password: `password`
 
 2. Run backend (from project root):
 
@@ -132,7 +125,17 @@ All API endpoints are prefixed with `/api` and expect JSON. Authenticated endpoi
 
 - Dashboard (server-side analytics)
     - GET `/api/dashboard/summary` — returns all-time `totalIncome`, `totalExpenses`, `balance`.
-    - GET `/api/dashboard/recent?limit=5` — latest N transactions (merged incomes & expenses, sorted by date).  
+        - Example response:
+            ```json
+            { "totalIncome": 1000.00, "totalExpenses": 750.00, "balance": 250.00 }
+            ```
+    - GET `/api/dashboard/recent?limit=5` — latest N transactions (merged incomes & expenses, sorted by date).
+        - Example response:
+            ```json
+            [
+                { "id":"exp-1","title":"Lunch","amount":12.5,"date":"2026-06-21","type":"expense","category":"Food","description":"" }
+            ]
+            ```
     - GET `/api/dashboard/monthly?month=YYYY-MM` — monthly totals and highest expense category for the specified month.
         
 
