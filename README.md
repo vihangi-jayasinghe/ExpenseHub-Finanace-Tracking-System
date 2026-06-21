@@ -132,21 +132,8 @@ All API endpoints are prefixed with `/api` and expect JSON. Authenticated endpoi
 
 - Dashboard (server-side analytics)
     - GET `/api/dashboard/summary` — returns all-time `totalIncome`, `totalExpenses`, `balance`.
-        - Example response:
-            ```json
-            { "totalIncome": 1000.00, "totalExpenses": 750.00, "balance": 250.00 }
-            ```
-    - GET `/api/dashboard/recent?limit=5` — latest N transactions (merged incomes & expenses, sorted by date).
-        - Example response:
-            ```json
-            [
-                { "id":"exp-1","title":"Lunch","amount":12.5,"date":"2026-06-21","type":"expense","category":"Food","description":"" }
-            ]
-            ```
+    - GET `/api/dashboard/recent?limit=5` — latest N transactions (merged incomes & expenses, sorted by date).  
     - GET `/api/dashboard/monthly?month=YYYY-MM` — monthly totals and highest expense category for the specified month.
-        - Example response:
-            ```json
-            { "totalIncome": 500.0, "totalExpenses": 300.0, "highestExpenseCategory": "Food", "highestExpenseAmount": 120.0 }
-            ```
+        
 
 

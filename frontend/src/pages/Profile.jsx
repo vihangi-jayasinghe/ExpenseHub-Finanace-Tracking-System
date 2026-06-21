@@ -120,7 +120,7 @@ export default function Profile() {
           />
 
           <FormInput
-            label="Email Address (Read-only)"
+            label="Email Address"
             type="email"
             value={profile.email}
             disabled
