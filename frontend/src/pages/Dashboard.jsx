@@ -168,7 +168,7 @@ export default function Dashboard() {
               </div>
             </div>
             <h3 className="text-3xl font-extrabold text-slate-900 mt-4">
-              ${summary.totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              Rs.{summary.totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h3>
           </div>
           <div className="mt-6 flex items-center gap-1 text-xs text-emerald-600 font-bold bg-emerald-50 w-fit px-2 py-1 rounded-lg">
@@ -188,7 +188,7 @@ export default function Dashboard() {
               </div>
             </div>
             <h3 className="text-3xl font-extrabold text-slate-900 mt-4">
-              ${summary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              Rs.{summary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h3>
           </div>
           <div className="mt-6 flex items-center gap-1 text-xs text-rose-600 font-bold bg-rose-50 w-fit px-2 py-1 rounded-lg">
@@ -212,7 +212,7 @@ export default function Dashboard() {
               </div>
             </div>
             <h3 className="text-3xl font-extrabold text-slate-900 mt-4">
-              ${summary.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              Rs.{summary.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h3>
           </div>
           <div className={`mt-6 text-xs font-bold w-fit px-2 py-1 rounded-lg ${
@@ -245,13 +245,13 @@ export default function Dashboard() {
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Monthly Income</span>
             <h4 className="text-xl font-bold mt-1 text-emerald-600">
-              ${totalMonthlyIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              Rs.{totalMonthlyIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h4>
           </div>
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Monthly Expenses</span>
             <h4 className="text-xl font-bold mt-1 text-rose-600">
-              ${totalMonthlyExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              Rs.{totalMonthlyExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </h4>
           </div>
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
@@ -262,7 +262,7 @@ export default function Dashboard() {
               </h4>
               {highestCategoryAmount > 0 && (
                 <span className="text-xs text-rose-500 font-bold">
-                  (${highestCategoryAmount.toFixed(2)})
+                  (Rs.{highestCategoryAmount.toFixed(2)})
                 </span>
               )}
             </div>
@@ -300,7 +300,7 @@ export default function Dashboard() {
                   <span className={`font-extrabold text-sm ${
                     tx.type === 'income' ? 'text-emerald-600' : 'text-rose-600'
                   }`}>
-                    {tx.type === 'income' ? '+' : '-'}${tx.amount.toFixed(2)}
+                    {tx.type === 'income' ? '+' : '-'}Rs.{tx.amount.toFixed(2)}
                   </span>
                   <p className="text-xs text-slate-400 truncate max-w-xs">{tx.description}</p>
                 </div>

@@ -59,7 +59,7 @@ export default function ExpenseList() {
       title: 'Amount',
       render: r => (
         <span className="font-bold text-rose-600">
-          -${(r.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          -Rs.{(r.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
       )
     },
@@ -105,7 +105,7 @@ export default function ExpenseList() {
       )}
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-slate-500">
+        <div className="flex flex-col items-center justify-center min-h-75 gap-3 text-slate-500">
           <Loader2 size={36} className="animate-spin text-blue-600" />
           <span className="text-sm font-semibold">Loading ledger transactions...</span>
         </div>

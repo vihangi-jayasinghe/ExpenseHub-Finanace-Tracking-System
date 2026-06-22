@@ -96,7 +96,7 @@ export default function IncomeForm() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] gap-3 text-slate-500">
+      <div className="flex flex-col items-center justify-center min-h-75 gap-3 text-slate-500">
         <Loader2 size={36} className="animate-spin text-blue-600" />
         <span className="text-sm font-semibold">Retrieving transaction details...</span>
       </div>
@@ -151,7 +151,7 @@ export default function IncomeForm() {
             </div>
 
             <FormInput
-              label="Amount ($)"
+              label="Amount (Rs.)"
               type="number"
               step="0.01"
               value={form.amount}
