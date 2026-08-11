@@ -16,6 +16,13 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [navigate])
+
+  useEffect(() => {
     setValid(validateEmail(email) && password.length >= 6)
   }, [email, password])
 

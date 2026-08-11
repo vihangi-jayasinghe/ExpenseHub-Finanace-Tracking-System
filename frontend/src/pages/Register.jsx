@@ -20,6 +20,13 @@ export default function Register() {
   const [strength, setStrength] = useState(0)
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [navigate])
+
+  useEffect(() => {
     setStrength(calcStrength(password))
     setValid(
       name.trim().length > 0 &&

@@ -1,9 +1,15 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 import Header from '../components/Header'
 import Sidebar from '../components/Sidebar'
 
 export default function MainLayout() {
+  const token = localStorage.getItem('token')
+
+  if (!token) {
+    return <Navigate to="/login" replace />
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
       <Header />
