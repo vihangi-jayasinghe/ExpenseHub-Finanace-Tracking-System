@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Wallet, CreditCard, Scale, Loader2, ArrowUpRight, ArrowDownRight, Sparkles, Calendar, TrendingUp } from 'lucide-react'
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts'
 import Card from '../components/Card'
 import { api } from '../services/api'
+
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#64748B']
 
 // Robust date parser to handle strings, Date objects, and Java-style integer arrays [yyyy, mm, dd]
 function parseLocalDate(dateVal) {
@@ -64,9 +67,14 @@ export default function Dashboard() {
     setLoading(true)
     setError('')
 
-    // Use backend dashboard endpoints to minimize data transfer and leverage server-side aggregation
-    Promise.all([api.getSummary(), api.getRecent(5), api.getMonthly(selectedMonth)])
-      .then(([summaryRes, recentRes, monthlyRes]) => {
+    Promise.all([
+      api.getSummary(),
+      api.getRecent(5),
+      api.getMonthly(selectedMonth),
+      api.getExpenses(),
+      api.getIncomes()
+    ])
+      .then(([summaryRes, recentRes, monthlyRes, expensesRes, incomesRes]) => {
         if (summaryRes && typeof summaryRes === 'object') {
           setSummary({
             totalIncome: parseFloat(summaryRes.totalIncome || 0),
@@ -99,6 +107,9 @@ export default function Dashboard() {
             highestExpenseAmount: parseFloat(monthlyRes.highestExpenseAmount || 0)
           })
         }
+
+        setExpenses(expensesRes || [])
+        setIncomes(incomesRes || [])
       })
       .catch(err => {
         console.error('Failed to load dashboard data', err)
@@ -112,6 +123,49 @@ export default function Dashboard() {
         setLoading(false)
       })
   }, [navigate, selectedMonth])
+
+  // --- Process charts datasets ---
+  const cashFlowData = useMemo(() => {
+    const data = []
+    const now = new Date()
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const key = `${year}-${month}`
+      
+      const monthLabel = d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+      
+      const monthlyInc = incomes
+        .filter(inc => getYearMonthStr(inc.incomeDate) === key)
+        .reduce((sum, inc) => sum + parseFloat(inc.amount || 0), 0)
+        
+      const monthlyExp = expenses
+        .filter(exp => getYearMonthStr(exp.expenseDate) === key)
+        .reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0)
+        
+      data.push({
+        name: monthLabel,
+        Income: monthlyInc,
+        Expenses: monthlyExp
+      })
+    }
+    return data
+  }, [expenses, incomes])
+
+  const categoryData = useMemo(() => {
+    const filtered = expenses.filter(exp => getYearMonthStr(exp.expenseDate) === selectedMonth)
+    const groups = {}
+    filtered.forEach(exp => {
+      const cat = exp.category || 'Other'
+      groups[cat] = (groups[cat] || 0) + parseFloat(exp.amount || 0)
+    })
+    
+    return Object.entries(groups).map(([name, value]) => ({
+      name,
+      value
+    })).sort((a, b) => b.value - a.value)
+  }, [expenses, selectedMonth])
 
   if (loading) {
     return (
@@ -266,6 +320,76 @@ export default function Dashboard() {
                 </span>
               )}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Visual Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Cash Flow Chart */}
+        <div className="lg:col-span-3 bg-white border border-slate-200/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-4">
+              <TrendingUp size={16} className="text-blue-500" />
+              <span>Cash Flow Trend (Last 6 Months)</span>
+            </h4>
+          </div>
+          <div className="h-80 mt-6">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={cashFlowData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)' }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '11px', fontWeight: 'bold', paddingTop: '10px' }} />
+                <Bar dataKey="Income" fill="#10B981" radius={[4, 4, 0, 0]} barSize={16} />
+                <Bar dataKey="Expenses" fill="#EF4444" radius={[4, 4, 0, 0]} barSize={16} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Category Pie Chart */}
+        <div className="lg:col-span-2 bg-white border border-slate-200/60 rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+          <div>
+            <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2 border-b border-slate-100 pb-4">
+              <Scale size={16} className="text-blue-500" />
+              <span>Category Allocation ({selectedMonth})</span>
+            </h4>
+          </div>
+          <div className="h-80 mt-6 relative flex flex-col justify-center items-center">
+            {categoryData.length === 0 ? (
+              <p className="text-slate-400 text-xs text-center py-10">No expense records found for this month.</p>
+            ) : (
+              <>
+                <ResponsiveContainer width="100%" height="70%">
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {categoryData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="grid grid-cols-2 gap-2 mt-4 w-full px-2 max-h-24 overflow-y-auto">
+                  {categoryData.slice(0, 6).map((entry, index) => (
+                    <div key={entry.name} className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                      <span className="text-[10px] font-bold text-slate-600 truncate uppercase">{entry.name}</span>
+                      <span className="text-[10px] text-slate-400 font-semibold ml-auto">Rs.{entry.value.toFixed(0)}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { TrendingUp, ArrowRight, User, Mail, MapPin, Lock, Eye, EyeOff, ShieldCheck, AlertCircle, Loader2 } from 'lucide-react'
 import { api } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 import logoUrl from '../assets/Logo.jpg'
 
 export default function Register() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [address, setAddress] = useState('')
@@ -18,6 +20,12 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
   const [valid, setValid] = useState(false)
   const [strength, setStrength] = useState(0)
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [user, navigate])
 
   useEffect(() => {
     setStrength(calcStrength(password))

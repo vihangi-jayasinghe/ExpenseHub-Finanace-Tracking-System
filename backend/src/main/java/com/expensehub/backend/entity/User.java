@@ -36,4 +36,10 @@ public class User {
         cascade = CascadeType.ALL
     )
     private List<Expense> expenses;
+
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL
+    )
+    private List<Income> incomes;
 }

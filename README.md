@@ -2,14 +2,18 @@
 
 A secure, high-fidelity web application built for Sri Lanka Telecom (Services) Limited take-home assessment. This project lets users record, manage, and analyze daily expenses and incomes through a clean, modern dashboard UI.
 
+![ExpenseHub Dashboard Mockup](./mockup.png)
+
 ---
 
 ## 🚀 Features
 
-### 1. User Management
+### 1. User Management & Profile Settings
 * **Secure Registration**: Register with Name, Email, Address, and Password.
 * **JWT-Based Authentication**: Custom Spring Security authentication with stateless JSON Web Tokens.
 * **User Profile**: View and edit user details (Name, Address) with read-only Email constraints.
+* **Immediate Context Sync**: Profile changes are synchronized instantly globally via `useAuth` contexts without requiring manual session refreshes.
+* **Cascade Delete Protection**: Safe account purging. Deleting a user automatically and cleanly cascadingly removes all associated income and expense records.
 
 ### 2. Expense Management
 * **Debit Tracking**: Add expenses with Title, Category, Amount, Transaction Date, and Description.
@@ -20,11 +24,21 @@ A secure, high-fidelity web application built for Sri Lanka Telecom (Services) L
 * **Credit Tracking**: Add incomes with Source, Amount, Received Date, and Description.
 * **CRUD Operations**: Dynamically create, read, update, and delete income records.
 
-### 4. Financial Dashboard
-* **Real-time Metrics**: Displays all-time Total Income, Total Expenses, and Net Balance.
-* **Transaction History**: Displays the latest 5 transactions (Income/Expenses merged and sorted).
-* **Monthly Allocation**: View total Monthly Expenses and Monthly Income for a selected month/year.
-* **Highest Expense Category**: Automatically identifies and displays the highest expense category for the selected month.
+### 4. Interactive Visual Analytics
+* **Cash Flow Trend**: 6-month side-by-side comparative Bar Chart showing Income vs Expenses using **Recharts**.
+* **Category Spending Allocation**: Categorical doughnut/pie charts showing the percentage breakdown of expenses for the selected month.
+* **Real-time Overview Metrics**: Displays all-time Total Income, Total Expenses, and Net Balance with reactive state calculations.
+* **Monthly Allocation & Insights**: View total Monthly Expenses and Monthly Income for a selected month/year, alongside automatic identification of the Highest Expense Category.
+
+### 5. Advanced Security & Global State Guarding
+* **Centralized State**: Global auth state is managed via a dedicated `AuthContext` provider.
+* **Global API Interceptor**: Catch `401 Unauthorized` token expiry states on any frontend call, executing auto-logout and redirecting the user to `/login?expired=true`.
+* **Client-Side Route Guarding**: Protected layout wrapper prevents unauthenticated access to the dashboard and ledgers.
+
+### 6. Structured PDF Statement Downloads
+* **Professional Layout**: Replaced legacy CSV downloads with high-fidelity, customized financial PDF statements using **jsPDF** and **jsPDF-AutoTable**.
+* **Corporate Formatting**: Generates clean tables with right-aligned currencies, total records counts, custom branding, timestamps, and page numbers.
+
 
 ---
 
@@ -44,6 +58,8 @@ A secure, high-fidelity web application built for Sri Lanka Telecom (Services) L
 * **Tailwind CSS v4**: Utility-first CSS styling for premium UI.
 * **Lucide Icons**: Crisp, vector dashboard icons.
 * **React Router v7**: Single Page Application (SPA) client-side routing.
+* **Recharts**: Advanced data visualization charting library.
+* **jsPDF & jsPDF-AutoTable**: High-fidelity client-side PDF document generation.
 
 ---
 

@@ -1,41 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate, Link, useLocation } from 'react-router-dom'
+import React from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import { TrendingUp, User, LogOut, LayoutDashboard, Wallet, CreditCard } from 'lucide-react'
-import { api } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 import logoUrl from '../assets/Logo.jpg'
 
 export default function Header() {
   const navigate = useNavigate()
-  const location = useLocation()
-  const token = localStorage.getItem('token')
-  const [userName, setUserName] = useState('')
+  const { user, logout } = useAuth()
+  const userName = user ? user.name : ''
 
-  useEffect(() => {
-    if (token) {
-      api.getProfile()
-        .then(user => {
-          if (user && user.name) {
-            setUserName(user.name)
-          }
-        })
-        .catch(err => {
-          console.error('Failed to load profile in header', err)
-          if (err.message && err.message.toLowerCase().includes('unauthorized')) {
-            localStorage.removeItem('token')
-            navigate('/login')
-          }
-        })
-    }
-  }, [token, location.pathname])
-
-  function logout() {
-    localStorage.removeItem('token')
+  function handleLogout() {
+    logout()
     navigate('/')
   }
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-slate-100 px-6 py-4 flex items-center justify-between">
-      <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(token ? '/dashboard' : '/')}>
+      <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(user ? '/dashboard' : '/')}>
         <img src={logoUrl} alt="ExpenseHub Logo" className="h-9 w-auto object-contain rounded-xl shadow-sm" />
         <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
           ExpenseHub
@@ -43,7 +24,7 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-4">
-        {token ? (
+        {user ? (
           <>
             <div className="hidden sm:flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100">
               <div className="w-6.5 h-6.5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold uppercase">
@@ -63,7 +44,7 @@ export default function Header() {
             </button>
 
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-rose-600 hover:text-white bg-rose-50 hover:bg-rose-600 rounded-xl transition-all cursor-pointer"
               title="Sign Out"
             >

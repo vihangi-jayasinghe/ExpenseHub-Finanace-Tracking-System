@@ -8,6 +8,15 @@ function authHeader() {
 async function request(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json', ...authHeader(), ...(opts.headers || {}) }
   const res = await fetch(BASE + path, { ...opts, headers })
+  
+  if (res.status === 401) {
+    localStorage.removeItem('token')
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login?expired=true'
+    }
+    throw new Error('Session expired. Please log in again.')
+  }
+
   if (!res.ok) {
     const text = await res.text()
     throw new Error(text || res.statusText)
