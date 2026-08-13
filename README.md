@@ -1,6 +1,3 @@
-<img width="1024" height="1024" alt="expensehub" src="https://github.com/user-attachments/assets/0bc536ce-57e8-430f-928f-2893e8dfa90f" />
-
-
 # ExpenseHub - Finance Tracking System
 
 A secure, high-fidelity web application built for Sri Lanka Telecom (Services) Limited take-home assessment. This project lets users record, manage, and analyze daily expenses and incomes through a clean, modern dashboard UI.
