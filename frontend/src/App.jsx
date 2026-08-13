@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
 import HomeContent from './HomeContent'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -18,8 +19,9 @@ import './App.css'
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
         {/* Public landing/marketing page */}
         <Route path="/" element={<HomeContent />} />
 
@@ -46,5 +48,6 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   )
 }

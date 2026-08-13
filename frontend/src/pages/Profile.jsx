@@ -3,8 +3,10 @@ import { User, Mail, MapPin, Loader2, Save, BadgeCheck, Trash2 } from 'lucide-re
 import { useNavigate } from 'react-router-dom'
 import FormInput from '../components/FormInput'
 import { api } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 export default function Profile() {
+  const { logout, refreshProfile } = useAuth()
   const [profile, setProfile] = useState({ id: null, name: '', email: '', address: '' })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -50,10 +52,10 @@ export default function Profile() {
     })
       .then(res => {
         setSuccessMsg('Profile updated successfully!')
-        // Update local profile state with response if any
         if (res) {
           setProfile(p => ({ ...p, name: res.name || p.name, address: res.address || p.address }))
         }
+        return refreshProfile()
       })
       .catch(err => {
         console.error('Failed to update profile', err)
@@ -153,16 +155,15 @@ export default function Profile() {
                 </>
               )}
             </button>
-            <button
+             <button
               onClick={() => {
                 if (!profile.id) return
                 if (!window.confirm('Delete your profile? This action cannot be undone.')) return
                 setSaving(true)
                 api.deleteProfile(profile.id)
                   .then(() => {
-                    // clear token and redirect to login/home
-                    localStorage.removeItem('token')
-                    navigate('/login')
+                    logout()
+                    navigate('/')
                   })
                   .catch(err => {
                     console.error('Failed to delete profile', err)

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Wallet, Trash2, Edit, Plus, Loader2 } from 'lucide-react'
+import { Wallet, Trash2, Edit, Plus, Loader2, FileText } from 'lucide-react'
 import Table from '../components/Table'
 import { api } from '../services/api'
+import { exportStatementPDF } from '../utils/pdfGenerator'
 
 export default function IncomeList() {
   const [items, setItems] = useState([])
@@ -28,6 +29,33 @@ export default function IncomeList() {
       .finally(() => {
         setLoading(false)
       })
+  }
+
+  function handleExportPDF() {
+    if (items.length === 0) {
+      alert('No income records to export.')
+      return
+    }
+
+    const headers = ['Date', 'Source', 'Description', 'Amount (Rs.)']
+    const rows = items.map(item => [
+      item.incomeDate ? new Date(item.incomeDate).toLocaleDateString() : '-',
+      item.source || '',
+      item.description || '',
+      parseFloat(item.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    ])
+
+    const totalVal = items.reduce((sum, i) => sum + parseFloat(i.amount || 0), 0)
+      .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+    exportStatementPDF({
+      title: 'Income ledger Statement',
+      filename: `income_statement_${new Date().toISOString().split('T')[0]}.pdf`,
+      headers,
+      rows,
+      summaryLabel: 'Total Income Inflow',
+      summaryValue: totalVal
+    })
   }
 
   function handleDelete(id) {
@@ -78,7 +106,14 @@ export default function IncomeList() {
           </h2>
           <p className="text-slate-500 text-sm mt-1">Track incoming salaries, dividends, freelance tasks, and external funding.</p>
         </div>
-        <div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportPDF}
+            className="flex items-center gap-2 px-4 py-2.5 border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl shadow-sm transition-all cursor-pointer"
+          >
+            <FileText size={14} />
+            <span>Export PDF</span>
+          </button>
           <Link
             className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition-all"
             to="/incomes/new"

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { TrendingUp, ArrowRight, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, ShieldCheck } from 'lucide-react'
 import { api } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 import logoUrl from '../assets/Logo.jpg'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { user, login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [touched, setTouched] = useState({})
@@ -16,11 +18,10 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
+    if (user) {
       navigate('/dashboard', { replace: true })
     }
-  }, [navigate])
+  }, [user, navigate])
 
   useEffect(() => {
     setValid(validateEmail(email) && password.length >= 6)
@@ -43,11 +44,11 @@ export default function Login() {
 
     api.login({ email, password })
       .then(res => {
-        // Backend returns token in AuthResponse
         const token = res && res.token ? res.token : res
         if (token) {
-          localStorage.setItem('token', token)
-          navigate('/dashboard')
+          return login(token).then(() => {
+            navigate('/dashboard')
+          })
         } else {
           throw new Error('Authentication token not received.')
         }
